@@ -1,7 +1,7 @@
-
 class Entry:
     id: int
     text: str
+
 
 class ListState(State):
     entries: list[Entry] = []
