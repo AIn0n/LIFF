@@ -1,8 +1,10 @@
-from liff.liff import *
+from liff import *
 
-center(
-    children=[
-        text("Hello world"),
-        button(text("go to other side"), action=goto("other_side/moon")),
-    ]
+page(
+    center(
+        children=[
+            text("Hello world"),
+            button(text("go to other side"), action=goto("other_side/moon")),
+        ]
+    )
 )
