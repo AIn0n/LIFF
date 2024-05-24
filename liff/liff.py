@@ -1,4 +1,4 @@
-from itertools import tee
+from typing import Iterable
 import inspect, os
 
 
@@ -18,27 +18,32 @@ def get_caller_script_path():
     return None
 
 
-def get_project_route_script_path():
-    *path_parts, script = get_caller_script_path().split("/")
-    project, routes = [], []
-    routes_detected = False
-    for part in path_parts:
-        if part == "routes":
-            routes_detected = True
-            continue
-        (project, routes)[routes_detected].append(part)
+def partition(l: Iterable, condition: callable, inclusive: str = "left") -> list:
+    res = [[]]
+    for part in l:
+        if condition(part):
+            res.append([])
+            if inclusive == "left":
+                res[-1].append(part)
+                continue
+        res[-1].append(part)
+    return res
 
-    return map(lambda x: "/".join(x), (project, routes, [script]))
+
+def get_project_route_script_path():
+    *parts, script = get_caller_script_path().split("/")
+    project, routes = partition(parts, lambda x: x == "routes")
+    return "/".join(project), "/".join(routes), script
 
 
 def change_extension(path: str, new_ext: str) -> str:
-    curr_path, curr_ext = path.split(".")
+    curr_path, _ = path.split(".")
     return f"{curr_path}.{new_ext}"
 
 
 def page(code: str) -> None:
     project, route, script = get_project_route_script_path()
-    build = f"{project}/build/routes/{route}"
+    build = f"{project}/build/{route}/"
     if not os.path.exists(build):
         os.makedirs(build)
     with open(build + change_extension(script, "html"), "wt") as file:
@@ -65,4 +70,4 @@ def button(child=None, action=None):
 
 
 def goto(path: str):
-    return path
+    return path + ".html"

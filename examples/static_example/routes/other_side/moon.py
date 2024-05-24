@@ -1,3 +1,3 @@
 from liff.liff import *
 
-center(children=[text("hello from the other side of the moon!")])
+page(center(children=[text("hello from the other side of the moon!")]))
